@@ -31,6 +31,18 @@
                         <a class="nav-link" href="{%url 'djangoapp:contact'%}"">Contact Us</a>
                     </li>
                 </ul>
+                <form action = "{% url 'djangoapp:login' %}"class="d-flex" method="post">
+                    {% csrf_token %}
+                    <div class="col-auto">
+                        <input class="form-control " type="email" placeholder="email" aria-label="email">
+                    </div>
+                    <div class="col-auto">
+                        <input class="form-control " type="password" placeholder="password" aria-label="password">
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-outline-success" type="submit">Log in</button>
+                    </div>
+                </form>
             </div>
         </nav>
 
