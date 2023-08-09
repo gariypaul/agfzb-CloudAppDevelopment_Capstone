@@ -31,18 +31,23 @@
                         <a class="nav-link" href="{%url 'djangoapp:contact'%}"">Contact Us</a>
                     </li>
                 </ul>
-                <form action = "{% url 'djangoapp:login' %}"class="d-flex" method="post">
+                {%if user.is_authenticated %}
+                <span class="navbar-text my-2 my-lg-0">{{user.username}}</span>
+                <a href="{%url 'djangoapp:logout' %}">Logout</a>
+                {% else %}
+                <form action = "{% url 'djangoapp:login' %}"class="form-inline my-2 my-lg-0" method="post">
                     {% csrf_token %}
                     <div class="col-auto">
-                        <input class="form-control " type="email" placeholder="email" aria-label="email">
+                        <input class="form-control " type="text" placeholder="username" name="username" required>
                     </div>
                     <div class="col-auto">
-                        <input class="form-control " type="password" placeholder="password" aria-label="password">
+                        <input class="form-control " type="password" placeholder="password" name="psw" required>
                     </div>
                     <div class="col-auto">
                         <button class="btn btn-outline-success" type="submit">Log in</button>
                     </div>
                 </form>
+                {% endif %}
             </div>
         </nav>
 
