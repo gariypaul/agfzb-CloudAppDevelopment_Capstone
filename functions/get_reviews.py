@@ -4,41 +4,39 @@ from cloudant.client import Cloudant
 
 app = Flask(__name__)
 
-# Simulated secret information
 secret = {
-    "URL": "https://a7637d95-13fd-4d36-bd33-c43326d44b48-bluemix.cloudantnosqldb.appdomain.cloud",
-    "IAM_API_KEY": "KvcAgqnvLvK8TRAqUujdAmrtR8mVwTjK2yHxDBDU9GQ1",
-    "ACCOUNT_NAME": "a7637d95-13fd-4d36-bd33-c43326d44b48-bluemix",
+    "URL": "https://52c0d074-8afe-4d63-87f8-bd5e6d7e8ad8-bluemix.cloudantnosqldb.appdomain.cloud",
+    "IAM_API_KEY": "klGbAyO_sHmbvPfn5x0eh4isZw0dR7Yms-Bcn6ko7kfv",
+    "USER_NAME": "52c0d074-8afe-4d63-87f8-bd5e6d7e8ad8-bluemix",
 }
 
 # Simulated Cloudant connection
 client = Cloudant.iam(
-    account_name=secret["ACCOUNT_NAME"],
+    account_name=secret["USER_NAME"],
     api_key=secret["IAM_API_KEY"],
     url=secret["URL"],
     connect=True,
 )
 my_database = client["reviews"]
 
-@app.route('/review', methods=['POST'])
+@app.route('/reviews', methods=['GET'])
 def invoke_review():
     try:
-        data = request.json
-        dealer_id = data.get("dealerId")
-        
-        if dealer_id is None:
-            return jsonify({
-                'statusCode': 400,
-                'message': "Missing 'dealerId' parameter"
-            })
+        dealer_id = int(request.args.get("dealerId"))
 
-        selector = {'dealership': {'$eq': int(dealer_id)}}
-        result_by_filter = my_database.get_query_result(selector, raw_result=True)
+        selector = {'dealership': {'$eq': dealer_id}}
+        result_by_filter = my_database.get_query_result(
+            selector, raw_result=True)
+        reviews = result_by_filter["docs"]
+        review_list=[]        
+        for review in reviews:
+            review_list.append(review)
 
         result = {
             'headers': {'Content-Type': 'application/json'},
-            'body': {'data': result_by_filter}
+            'body': {'data': review_list}
         }
+
         return jsonify(result)
     except Exception as e:
         return jsonify({
