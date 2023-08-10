@@ -29,7 +29,7 @@ class CarModel (models.Model):
     id = models.CharField(max_length=2)
     type = models.CharField(max_length=10)
     year = models.DateField(null=True)
-    carmakes = models.ManytoManyField(CarMake)
+    carmakes = models.ManyToManyField(CarMake)
 
     def __str__(self):
         return self.name
