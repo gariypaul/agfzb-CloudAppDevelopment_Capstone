@@ -3,9 +3,9 @@ from cloudant.query import Query
 from flask import Flask, jsonify, request
 import atexit
 #Add your Cloudant service credentials here
-cloudant_username = ''
-cloudant_api_key = ''
-cloudant_url = ''
+cloudant_username = "52c0d074-8afe-4d63-87f8-bd5e6d7e8ad8-bluemix"
+cloudant_api_key = "PNQr_4mkO_O9XQACExGWGGPmAaBNb9WkbckMZSLqGlBm"
+cloudant_url = "https://52c0d074-8afe-4d63-87f8-bd5e6d7e8ad8-bluemix.cloudantnosqldb.appdomain.cloud"
 client = Cloudant.iam(cloudant_username, cloudant_api_key, connect=True, url=cloudant_url)
 session = client.session()
 print('Databases:', client.all_dbs())
