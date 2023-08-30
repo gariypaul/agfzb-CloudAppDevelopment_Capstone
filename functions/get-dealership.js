@@ -28,10 +28,10 @@ app.get('/dealerships/get', (req, res) => {
     // Create a selector object based on query parameters
     const selector = {};
     if (state) {
-        selector.state = state;
+      selector.state = state;
     }
     if (id) {
-        selector.id = id;
+      selector.id = parseInt(id);
     }
     const queryOptions = {
         selector,
@@ -43,7 +43,11 @@ app.get('/dealerships/get', (req, res) => {
             res.status(500).json({ error: 'An error occurred while fetching dealerships.' });
         } else {
             const dealerships = body.docs;
-            res.json(dealerships);
+            if(body.docs.length==0){
+                res.status(404).json({error:'Not found'});
+            }else{
+                res.json(dealerships);
+            }
         }
     });
 });
