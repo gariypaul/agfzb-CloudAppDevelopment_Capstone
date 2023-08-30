@@ -31,7 +31,7 @@ app.get('/dealerships/get', (req, res) => {
         selector.state = state;
     }
     if (id) {
-        selector._id = id;
+        selector.id = id;
     }
     const queryOptions = {
         selector,
