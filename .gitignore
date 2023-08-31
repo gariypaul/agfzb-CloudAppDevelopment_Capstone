@@ -140,3 +140,5 @@ server/djangoapp/migrations/
 *.pyc
 server/djangoapp/migrations/
 
+#ignore npm dependencies for express server
+server/functions/node_modules/

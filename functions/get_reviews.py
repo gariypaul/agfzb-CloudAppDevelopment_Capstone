@@ -11,7 +11,7 @@ session = client.session()
 print('Databases:', client.all_dbs())
 db = client['reviews']
 app = Flask(__name__)
-@app.route('/api/get_reviews', methods=['GET'])
+@app.route('/api/review', methods=['GET'])
 def get_reviews():
     dealership_id = request.args.get('id')
     # Check if "id" parameter is missing
@@ -35,7 +35,7 @@ def get_reviews():
         data_list.append(doc)
     # Return the data as JSON
     return jsonify(data_list)
-@app.route('/api/post_review', methods=['POST'])
+@app.route('/api/review', methods=['POST'])
 def post_review():
     if not request.json:
         abort(400, description='Invalid JSON data')
