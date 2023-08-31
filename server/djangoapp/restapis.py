@@ -8,6 +8,7 @@ from requests.auth import HTTPBasicAuth
 def get_request(url,**kwargs):
     print(kwargs)
     print("GET from {} ".format(url))
+    response = None 
     try:
         # Call get method of requests library with URL and parameters
         response = requests.get(url, headers={'Content-Type': 'application/json'},
