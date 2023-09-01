@@ -105,7 +105,7 @@ def add_review(request, dealer_id):
             # Get dealer details from the API
             context = {
                 "cars": CarModel.objects.all(),
-                "dealer": get_dealer_by_id(url, dealer_id=dealer_id),
+                "dealer": get_dealer_by_id(url, dealer_id),
             }
             return render(request, 'djangoapp/add_review.html', context)
 
