@@ -45,12 +45,8 @@ def post_review():
 
     # Validate that the required fields are present in the review data
     required_fields = ['id', 'name', 'dealership', 'review', 'purchase', 'purchase_date', 'car_make', 'car_model', 'car_year']
-    try:
-        print(f"{review_data['name']}")
-    except Exception as e: 
-        print(str(e))
     for field in required_fields:
-        if field not in review_data:
+        if field not in review_data["review"]:
             print(f"Missing required field: {field}")
             return jsonify({"error": f"Missing required field: {field}"}), 401
 
