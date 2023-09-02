@@ -103,8 +103,12 @@ def add_review(request, dealer_id):
     # User must be logged in before posting a review
     if request.user.is_authenticated:
         # GET request renders the page with the form for filling out a review
+        review_id=0
         if request.method == "GET":
             url = f"https://gariypaul-3000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={dealer_id}"
+            url2=f"https://gariypaul-5000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review?id={dealer_id}"
+            current_reviews = get_dealer_reviews_from_cf(url2,dealer_id)
+            review_id= len(current_reviews)+1
             # Get dealer details from the API
             context = {
                 "cars": CarModel.objects.all(),
@@ -116,10 +120,12 @@ def add_review(request, dealer_id):
         if request.method == "POST":
             form = request.POST
             review = dict()
+            review["id"]= review_id
             review["name"] = f"{request.user.first_name} {request.user.last_name}"
             review["dealership"] = dealer_id
             review["review"] = form["content"]
             review["purchase"] = form.get("purchasecheck")
+            
             if review["purchase"]:
                 review["purchase_date"] = datetime.strptime(form.get("purchasedate"), "%m/%d/%Y").isoformat()
                 car = CarModel.objects.get(pk=form["car"])
