@@ -92,38 +92,46 @@ def get_dealer_reviews_from_cf(url, dealerId):
     results = []
     # Call get_request with a URL parameter
     json_result = get_request(url,id=dealerId)
+    if json_result is None:
+        raise ValueError("API response is None")
+
+    # Check if the JSON response is a list of reviews.
+    if not isinstance(json_result, list):
+        raise ValueError("API response is not a list")
     if json_result:
         # Get the row list in JSON as dealers
         reviews = json_result
         for review in reviews:
             review_content = review["review"]
-            id = review["_id"]
+            id = review["id"]
             name = review["name"]
             purchase = review["purchase"]
             dealership = review["dealership"]
+            sentiment = analyze_review_sentiments(review_content)
+
             try:
                 # These values may be missing
                 car_make = review["car_make"]
                 car_model = review["car_model"]
                 car_year = review["car_year"]
                 purchase_date = review["purchase_date"]
-
+                
                 # Creating a review object
                 review_obj = DealerReview(dealership=dealership, id=id, name=name, 
                                           purchase=purchase, review=review_content, car_make=car_make, 
-                                          car_model=car_model, car_year=car_year, purchase_date=purchase_date
+                                          car_model=car_model, car_year=car_year, purchase_date=purchase_date,sentiment=sentiment
                                           )
 
             except KeyError:
                 print("Something is missing from this review. Using default values.")
                 # Creating a review object with some default values
                 review_obj = DealerReview(
-                    dealership=dealership, id=id, name=name, purchase=purchase, review=review_content)
+                    dealership=dealership, id=id, name=name, purchase=purchase, review=review_content,car_make="", 
+                                          car_model="", car_year="", purchase_date="",sentiment=sentiment)
 
             # Analysing the sentiment of the review object's review text and saving it to the object attribute "sentiment"
-            review_obj.sentiment = analyze_review_sentiments(review_obj.review)
-            print(f"sentiment: {review_obj.sentiment}")
-
+            
+            
             # Saving the review object to the list of results
             results.append(review_obj)
 
@@ -136,19 +144,15 @@ def get_dealer_reviews_from_cf(url, dealerId):
 
 def analyze_review_sentiments(review_text):
     # Watson NLU configuration
-    try:
-        if os.environ['env_type'] == 'PRODUCTION':
-            url = os.environ['WATSON_NLU_URL']
-            api_key = os.environ["WATSON_NLU_API_KEY"]
-    except KeyError:
-        url = config('WATSON_NLU_URL')
-        api_key = config('WATSON_NLU_API_KEY')
-
+    secret={
+        "WATSON_API_KEY":"BfMTwrWPEkl_1yFJl2qmqL1U7D-sr-xfvZ50Lx6XDF_z",
+        "WATSON_URL":"https://api.au-syd.natural-language-understanding.watson.cloud.ibm.com/instances/b3997a6d-1e3c-4299-b112-d45b9985b4c8"
+    }
     version = '2021-08-01'
-    authenticator = IAMAuthenticator(api_key)
+    authenticator = IAMAuthenticator(secret["WATSON_API_KEY"])
     nlu = NaturalLanguageUnderstandingV1(
         version=version, authenticator=authenticator)
-    nlu.set_service_url(url)
+    nlu.set_service_url(secret["WATSON_URL"])
 
     # get sentiment of the review
     try:

@@ -87,11 +87,14 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
     url = ""
     if request.method == "GET":
-        url = "https://gariypaul-3000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={dealer_id}"
+        url = f"https://gariypaul-5000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review?id={dealer_id}"
+        url2 = f"https://gariypaul-3000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={dealer_id}"
         reviews = get_dealer_reviews_from_cf(url,dealer_id)
+        dealer = get_dealer_by_id(url2,dealer_id)
         context = {
             "reviews":reviews,
-            "dealer_id":dealer_id
+            "dealer_id":dealer_id,
+            "dealer":dealer
         }
         return render(request,'djangoapp/dealer_details.html',context)
 # Create a `add_review` view to submit a review
@@ -101,7 +104,7 @@ def add_review(request, dealer_id):
     if request.user.is_authenticated:
         # GET request renders the page with the form for filling out a review
         if request.method == "GET":
-            url = f"https://5b93346d.us-south.apigw.appdomain.cloud/dealerships/dealer-get?dealerId={dealer_id}"
+            url = f"https://gariypaul-3000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={dealer_id}"
             # Get dealer details from the API
             context = {
                 "cars": CarModel.objects.all(),
@@ -119,18 +122,17 @@ def add_review(request, dealer_id):
             review["purchase"] = form.get("purchasecheck")
             if review["purchase"]:
                 review["purchase_date"] = datetime.strptime(form.get("purchasedate"), "%m/%d/%Y").isoformat()
-            car = CarModel.objects.get(pk=form["car"])
-            review["car_make"] = car.car_make.name
-            review["car_model"] = car.name
-            review["car_year"] = car.year
-            
-            # If the user bought the car, get the purchase date
-            if form.get("purchasecheck"):
-                review["purchase_date"] = datetime.strptime(form.get("purchasedate"), "%m/%d/%Y").isoformat()
+                car = CarModel.objects.get(pk=form["car"])
+                review["car_make"] = car.car_make.name
+                review["car_model"] = car.name
+                review["car_year"] = car.year
             else: 
                 review["purchase_date"] = None
+                review["car_make"] = None
+                review["car_model"] = None
+                review["car_year"] = None
 
-            url = "https://9bebcb01.eu-de.apigw.appdomain.cloud/api/review"  # API Cloud Function route
+            url = "https://gariypaul-5000.theiadocker-3-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review"  # API Cloud Function route
             json_payload = {"review": review}  # Create a JSON payload that contains the review data
 
             # Performing a POST request with the review

@@ -50,12 +50,23 @@
         </nav>
 
     <!-- Add reviews as cards -->
+        <div class="jumbotron">
+            <h1>{{dealer.full_name}}</h1>      
+            <p>
+                {{dealer.st}} <br/>
+                {{dealer.city}}  <br/>
+                {{dealer.zip}}  <br/>
+                {{dealer.address}}  <br/>
+                
+            </p>
+        </div>   
         {% if reviews %}
         {% if user.is_authenticated %}
             <div style="margin: 10px;">
                 <a class="btn btn-primary" href="{% url 'djangoapp:add_review' dealer_id %}"><b>Write a car review</b></a>
             </div>
         {% endif %}
+      
         <div class="card-columns">
             {% for review in reviews %}
                 {% if review.car_make %}
